@@ -1,0 +1,160 @@
+{
+  "knn_k_comparison": [
+    {
+      "k": 3,
+      "train_f1": 0.6868778280542986,
+      "val_f1": 0.3793103448275862,
+      "val_accuracy": 0.64
+    },
+    {
+      "k": 5,
+      "train_f1": 0.6101694915254238,
+      "val_f1": 0.38472834067547723,
+      "val_accuracy": 0.6508333333333334
+    },
+    {
+      "k": 11,
+      "train_f1": 0.4981874676333506,
+      "val_f1": 0.38064516129032255,
+      "val_accuracy": 0.68
+    },
+    {
+      "k": 25,
+      "train_f1": 0.40654205607476634,
+      "val_f1": 0.3107142857142857,
+      "val_accuracy": 0.6783333333333333
+    },
+    {
+      "k": 51,
+      "train_f1": 0.2885117493472585,
+      "val_f1": 0.26120857699805067,
+      "val_accuracy": 0.6841666666666667
+    }
+  ],
+  "decision_tree_depth_comparison": [
+    {
+      "tree": "shallow (depth=2)",
+      "train_f1": 0.4701857282502444,
+      "val_f1": 0.5214899713467048,
+      "train_accuracy": 0.6988888888888889,
+      "val_accuracy": 0.7216666666666667,
+      "gap_accuracy": -0.022777777777777786
+    },
+    {
+      "tree": "moderate (depth=6)",
+      "train_f1": 0.4352392065344224,
+      "val_f1": 0.36923076923076925,
+      "train_accuracy": 0.7311111111111112,
+      "val_accuracy": 0.6925,
+      "gap_accuracy": 0.03861111111111115
+    },
+    {
+      "tree": "deep (depth=None)",
+      "train_f1": 1.0,
+      "val_f1": 0.4355444305381727,
+      "train_accuracy": 1.0,
+      "val_accuracy": 0.6241666666666666,
+      "gap_accuracy": 0.37583333333333335
+    }
+  ],
+  "underfit_overfit_demo": {
+    "underfitting_example": "Decision Tree depth=2 \u2014 low train AND validation F1 (high bias)",
+    "overfitting_example": "Decision Tree depth=None (unlimited) \u2014 high train F1, much lower validation F1 (high variance, large train/val gap)",
+    "evidence": [
+      {
+        "tree": "shallow (depth=2)",
+        "train_f1": 0.4701857282502444,
+        "val_f1": 0.5214899713467048,
+        "train_accuracy": 0.6988888888888889,
+        "val_accuracy": 0.7216666666666667,
+        "gap_accuracy": -0.022777777777777786
+      },
+      {
+        "tree": "moderate (depth=6)",
+        "train_f1": 0.4352392065344224,
+        "val_f1": 0.36923076923076925,
+        "train_accuracy": 0.7311111111111112,
+        "val_accuracy": 0.6925,
+        "gap_accuracy": 0.03861111111111115
+      },
+      {
+        "tree": "deep (depth=None)",
+        "train_f1": 1.0,
+        "val_f1": 0.4355444305381727,
+        "train_accuracy": 1.0,
+        "val_accuracy": 0.6241666666666666,
+        "gap_accuracy": 0.37583333333333335
+      }
+    ]
+  },
+  "decision_tree_vs_random_forest": [
+    {
+      "model": "Decision Tree",
+      "val_f1": 0.36923076923076925,
+      "val_accuracy": 0.6925,
+      "val_roc_auc": 0.713988937159022
+    },
+    {
+      "model": "Random Forest",
+      "val_f1": 0.4251207729468599,
+      "val_accuracy": 0.7025,
+      "val_roc_auc": 0.7334341533643159
+    }
+  ],
+  "random_forest_vs_boosting": [
+    {
+      "model": "Random Forest",
+      "val_f1": 0.4251207729468599,
+      "val_roc_auc": 0.7334341533643159
+    },
+    {
+      "model": "Gradient Boosting",
+      "val_f1": 0.4405705229793978,
+      "val_roc_auc": 0.7385772378258234
+    }
+  ],
+  "svm_scaling_comparison": [
+    {
+      "setup": "SVM with scaling",
+      "val_f1": 0.3924914675767918,
+      "val_accuracy": 0.7033333333333334,
+      "val_roc_auc": 0.7165210143463326
+    },
+    {
+      "setup": "SVM without scaling",
+      "val_f1": 0.0,
+      "val_accuracy": 0.6733333333333333,
+      "val_roc_auc": 0.5131971105273793
+    }
+  ],
+  "class_imbalance_comparison": [
+    {
+      "setup": "LogReg (default)",
+      "val_precision": 0.6078431372549019,
+      "val_recall": 0.39540816326530615,
+      "val_f1": 0.47913446676970634,
+      "val_accuracy": 0.7191666666666666
+    },
+    {
+      "setup": "LogReg (balanced)",
+      "val_precision": 0.49581239530988275,
+      "val_recall": 0.7551020408163265,
+      "val_f1": 0.5985844287158746,
+      "val_accuracy": 0.6691666666666667
+    },
+    {
+      "setup": "RandomForest (default)",
+      "val_precision": 0.5764192139737991,
+      "val_recall": 0.336734693877551,
+      "val_f1": 0.4251207729468599,
+      "val_accuracy": 0.7025
+    },
+    {
+      "setup": "RandomForest (balanced)",
+      "val_precision": 0.5251046025104602,
+      "val_recall": 0.6403061224489796,
+      "val_f1": 0.5770114942528736,
+      "val_accuracy": 0.6933333333333334
+    }
+  ]
+}
