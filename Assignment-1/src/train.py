@@ -22,6 +22,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
+from config import load_project_config
 from data_prep import build_preprocessor, load_and_inspect, split_data
 from utils import evaluate_split, fit_and_time, plot_confusion_matrix, plot_roc_curves, plot_bar_comparison
 
@@ -51,10 +52,24 @@ def get_models():
 
 
 def main():
-    df = load_and_inspect("data/telecom_churn.csv")
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(df)
+    cfg = load_project_config()
+    df = load_and_inspect(
+        cfg["dataset_path"],
+        target_column=cfg["target_column"],
+        id_columns=cfg["id_columns"],
+    )
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data(
+        df,
+        target_column=cfg["target_column"],
+        seed=cfg["random_seed"],
+    )
 
-    preprocessor = build_preprocessor(scale_numeric=True)
+    preprocessor = build_preprocessor(
+        X_reference=X_train,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
+        scale_numeric=True,
+    )
     models = get_models()
 
     all_results = []

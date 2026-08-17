@@ -66,6 +66,19 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## 3.1 Dataset configuration (no code edits needed)
+
+Dataset settings are centralized in `config/dataset_config.json`.
+
+- `dataset_path`: path to CSV file
+- `target_column`: label column name
+- `id_columns`: identifier columns to drop (if present)
+- `numeric_features` / `categorical_features`:
+  - leave both empty (`[]`) to auto-infer from dtypes
+  - or provide explicit lists for full control
+
+So if you change datasets later, update only this JSON file and rerun the scripts.
+
 ## 4. Running the project
 
 Run everything from the `assignment_1_supervised/` root, in order:

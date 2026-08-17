@@ -1,0 +1,8 @@
+{
+  "dataset_path": "data/telecom_churn.csv",
+  "target_column": "churn",
+  "id_columns": ["customer_id"],
+  "numeric_features": [],
+  "categorical_features": [],
+  "random_seed": 42
+}

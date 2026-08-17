@@ -20,6 +20,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+from config import load_project_config
 from data_prep import build_preprocessor, load_and_inspect, split_data
 from utils import evaluate_split, fit_and_time, plot_bar_comparison
 
@@ -27,8 +28,22 @@ warnings.filterwarnings("ignore")
 RANDOM_SEED = 42
 
 
-def run_pipeline(model, X_train, y_train, X_val, y_val, scale_numeric=True):
-    pre = build_preprocessor(scale_numeric=scale_numeric)
+def run_pipeline(
+    model,
+    X_train,
+    y_train,
+    X_val,
+    y_val,
+    numeric_features=None,
+    categorical_features=None,
+    scale_numeric=True,
+):
+    pre = build_preprocessor(
+        X_reference=X_train,
+        numeric_features=numeric_features,
+        categorical_features=categorical_features,
+        scale_numeric=scale_numeric,
+    )
     pipe = Pipeline(steps=[("preprocessor", pre), ("model", model)])
     pipe, train_time = fit_and_time(pipe, X_train, y_train)
     train_metrics, _, _ = evaluate_split(pipe, X_train, y_train, "train")
@@ -37,8 +52,18 @@ def run_pipeline(model, X_train, y_train, X_val, y_val, scale_numeric=True):
 
 
 def main():
-    df = load_and_inspect("data/telecom_churn.csv", verbose=False)
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(df)
+    cfg = load_project_config()
+    df = load_and_inspect(
+        cfg["dataset_path"],
+        target_column=cfg["target_column"],
+        id_columns=cfg["id_columns"],
+        verbose=False,
+    )
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data(
+        df,
+        target_column=cfg["target_column"],
+        seed=cfg["random_seed"],
+    )
     summary = {}
 
     # ------------------------------------------------------------------
@@ -48,7 +73,13 @@ def main():
     knn_results = []
     for k in [3, 5, 11, 25, 51]:
         pipe, t, train_m, val_m = run_pipeline(
-            KNeighborsClassifier(n_neighbors=k), X_train, y_train, X_val, y_val
+            KNeighborsClassifier(n_neighbors=k),
+            X_train,
+            y_train,
+            X_val,
+            y_val,
+            numeric_features=cfg["numeric_features"],
+            categorical_features=cfg["categorical_features"],
         )
         knn_results.append({"k": k, "train_f1": train_m["f1"], "val_f1": val_m["f1"],
                              "val_accuracy": val_m["accuracy"]})
@@ -70,7 +101,12 @@ def main():
                           ("deep (depth=None)", None)]:
         pipe, t, train_m, val_m = run_pipeline(
             DecisionTreeClassifier(max_depth=depth, random_state=RANDOM_SEED),
-            X_train, y_train, X_val, y_val,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
+            numeric_features=cfg["numeric_features"],
+            categorical_features=cfg["categorical_features"],
         )
         dt_results.append({
             "tree": label, "train_f1": train_m["f1"], "val_f1": val_m["f1"],
@@ -93,11 +129,22 @@ def main():
     # ------------------------------------------------------------------
     print("\n[3] Decision Tree vs Random Forest")
     _, _, dt_train_m, dt_val_m = run_pipeline(
-        DecisionTreeClassifier(max_depth=6, random_state=RANDOM_SEED), X_train, y_train, X_val, y_val
+        DecisionTreeClassifier(max_depth=6, random_state=RANDOM_SEED),
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
     )
     _, _, rf_train_m, rf_val_m = run_pipeline(
         RandomForestClassifier(n_estimators=300, max_depth=10, random_state=RANDOM_SEED, n_jobs=-1),
-        X_train, y_train, X_val, y_val,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
     )
     dt_vs_rf = pd.DataFrame([
         {"model": "Decision Tree", "val_f1": dt_val_m["f1"], "val_accuracy": dt_val_m["accuracy"],
@@ -114,7 +161,13 @@ def main():
     # ------------------------------------------------------------------
     print("\n[4] Random Forest vs Gradient Boosting")
     _, _, gb_train_m, gb_val_m = run_pipeline(
-        GradientBoostingClassifier(random_state=RANDOM_SEED), X_train, y_train, X_val, y_val
+        GradientBoostingClassifier(random_state=RANDOM_SEED),
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
     )
     rf_vs_gb = pd.DataFrame([
         {"model": "Random Forest", "val_f1": rf_val_m["f1"], "val_roc_auc": rf_val_m["roc_auc"]},
@@ -130,11 +183,23 @@ def main():
     print("\n[5] SVM — with vs without feature scaling")
     _, _, svm_scaled_train, svm_scaled_val = run_pipeline(
         SVC(probability=True, kernel="rbf", random_state=RANDOM_SEED),
-        X_train, y_train, X_val, y_val, scale_numeric=True,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
+        scale_numeric=True,
     )
     _, _, svm_unscaled_train, svm_unscaled_val = run_pipeline(
         SVC(probability=True, kernel="rbf", random_state=RANDOM_SEED),
-        X_train, y_train, X_val, y_val, scale_numeric=False,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+        numeric_features=cfg["numeric_features"],
+        categorical_features=cfg["categorical_features"],
+        scale_numeric=False,
     )
     svm_scaling = pd.DataFrame([
         {"setup": "SVM with scaling", "val_f1": svm_scaled_val["f1"],
@@ -162,7 +227,15 @@ def main():
         ("RandomForest (default)", RandomForestClassifier(n_estimators=300, max_depth=10, random_state=RANDOM_SEED, n_jobs=-1)),
         ("RandomForest (balanced)", RandomForestClassifier(n_estimators=300, max_depth=10, class_weight="balanced", random_state=RANDOM_SEED, n_jobs=-1)),
     ]:
-        _, _, train_m, val_m = run_pipeline(model, X_train, y_train, X_val, y_val)
+        _, _, train_m, val_m = run_pipeline(
+            model,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
+            numeric_features=cfg["numeric_features"],
+            categorical_features=cfg["categorical_features"],
+        )
         imbalance_results.append({
             "setup": name, "val_precision": val_m["precision"], "val_recall": val_m["recall"],
             "val_f1": val_m["f1"], "val_accuracy": val_m["accuracy"],
