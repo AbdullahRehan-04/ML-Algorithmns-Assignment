@@ -1,0 +1,5 @@
+kmeans_cluster,Income,Recency,Total_Spend,Total_Purchases,Age,Customer_Tenure_Days,NumWebVisitsMonth,Family_Size,count
+0,59578.4,48.1,912.3,22.3,49.3,500.0,6.1,2.7,534
+1,29069.4,47.0,102.2,7.9,37.3,420.7,7.3,2.6,582
+2,77716.0,49.3,1325.2,20.3,45.5,303.6,2.3,1.8,527
+3,44364.4,51.8,172.6,10.0,48.8,194.3,5.3,3.2,569

@@ -1,0 +1,4 @@
+dbscan_cluster,Income,Recency,Total_Spend,Total_Purchases,Age,Customer_Tenure_Days,NumWebVisitsMonth,Family_Size,count
+0,48859.2,49.4,496.9,14.0,45.1,342.8,5.5,2.7,1763
+1,84012.5,79.3,1462.5,18.5,29.5,376.5,1.7,1.0,6
+2,72621.4,9.0,1759.3,17.6,36.1,634.7,2.7,1.9,7
